@@ -31,10 +31,9 @@ RUN wget --quiet https://github.com/conda-forge/miniforge/releases/latest/downlo
     rm ~/miniforge.sh && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo "source /opt/conda/etc/profile.d/conda.sh" >> /opt/nvidia/entrypoint.d/100.conda.sh && \
-    echo "conda activate ${VENV}" >> /opt/nvidia/entrypoint.d/110.conda_default_env.sh
-
-# RUN echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-#     echo "conda activate ${VENV}" >> $HOME/.bashrc
+    echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate ${VENV}" >> /opt/nvidia/entrypoint.d/110.conda_default_env.sh && \
+    echo "conda activate ${VENV}" >> $HOME/.bashrc
 
 ENV PATH /opt/conda/bin:$PATH
 
@@ -59,3 +58,13 @@ RUN conda activate ${VENV} && conda install -y -c conda-forge pynini==2.1.5
 RUN conda activate ${VENV} && cd CosyVoice && pip install -r requirements.txt
 
 WORKDIR /workspace/CosyVoice
+
+# ==================================================================
+# Devel environment
+# ------------------------------------------------------------------
+RUN wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -O ~/.git-completion.bash && \
+echo "source ~/.git-completion.bash" >> ~/.bashrc
+# ------------------------------------------------------------------
+# ~Devel environment
+# ==================================================================
+
