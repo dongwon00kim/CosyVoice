@@ -1,0 +1,99 @@
+{
+    // IntelliSense를 사용하여 가능한 특성에 대해 알아보세요.
+    // 기존 특성에 대한 설명을 보려면 가리킵니다.
+    // 자세한 내용을 보려면 https://go.microsoft.com/fwlink/?linkid=830387을(를) 방문하세요.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "CosyVoice: Inference",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cosyvoice/bin/inference.py",
+            "console": "integratedTerminal",
+            "args":[
+                "--mode", "zero_shot", // sft zero_shot
+                "--gpu", "0",
+                "--config", "${workspaceFolder}/examples/libritts/cosyvoice/conf/cosyvoice.yaml",
+                "--prompt_data", "/workspace/data/CosyVoiceDatasets/prepared/test-clean/parquet/data.list",
+                "--prompt_utt2data", "/workspace/data/CosyVoiceDatasets/prepared/test-clean/parquet/utt2data.list",
+                "--tts_text", "${workspaceFolder}/examples/libritts/cosyvoice/tts_text.json",
+                "--llm_model", "${workspaceFolder}/pretrained_models/CosyVoice-300M/llm.pt",
+                "--flow_model", "${workspaceFolder}/pretrained_models/CosyVoice-300M/flow.pt",
+                "--hifigan_model", "${workspaceFolder}/pretrained_models/CosyVoice-300M/hift.pt",
+                "--result_dir", "${workspaceFolder}/examples/libritts/cosyvoice/exp/cosyvoice/test-clean/",
+            ]
+        },
+        {
+            // cat /workspace/data/CosyVoiceDatasets/prepared/{train-clean-100,train-clean-360,train-other-500}/parquet/data.list > /workspace/data/CosyVoiceDatasets/prepared/train.data.list
+            // cat /workspace/data/CosyVoiceDatasets/prepared/{dev-clean,dev-other}/parquet/data.list > /workspace/data/CosyVoiceDatasets/prepared/dev.data.list
+
+            "name": "CosyVoice: Training",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/opt/conda/envs/cosyvoice/bin/torchrun",
+            "console": "integratedTerminal",
+            "args": [
+                "--nnodes=1",
+                "--nproc_per_node=1",
+                // "--rdzv_id=$job_id",
+                "--rdzv_backend=c10d",
+                "--rdzv_endpoint=localhost:0",
+                "${workspaceFolder}/cosyvoice/bin/train.py",
+                "--train_engine", "torch_ddp",  // "torch_ddp" or "deepspeed"
+                "--model", "llm",               // "llm" or "flow"
+                "--config", "${workspaceFolder}/examples/libritts/cosyvoice/conf/cosyvoice.yaml",
+                "--train_data", "/workspace/data/CosyVoiceDatasets/prepared/train.data.list",
+                "--cv_data", "/workspace/data/CosyVoiceDatasets/prepared/dev.data.list",
+                "--checkpoint", "${workspaceFolder}/pretrained_models/CosyVoice-300M/llm.pt",
+                "--model_dir", "/workspace/TrainingResults/CosyVoice/exp/cosyvoice/llm",                    // "llm" or "flow"
+                "--tensorboard_dir", "/workspace/TrainingResults/CosyVoice/exp/cosyvoice/tensorboard/llm",  // "llm" or "flow"
+                "--ddp.dist_backend", "nccl",
+                "--num_workers", "1",
+                "--prefetch", "100",
+                "--pin_memory",
+                "--deepspeed_config", "${workspaceFolder}/examples/libritts/cosyvoice/conf/ds_stage2.json",
+                "--deepspeed.save_states", "model+optimizer",
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0",
+            },
+        },
+
+        //     # train llm
+        //     export CUDA_VISIBLE_DEVICES="0,1,2,3"
+        //         num_gpus=$(echo $CUDA_VISIBLE_DEVICES | awk -F "," '{print NF}')
+        //         job_id=1986
+        //         dist_backend="nccl"
+        //         num_workers=2
+        //         prefetch=100
+        //         train_engine=torch_ddp
+        //         if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+        //         echo "Run train. We only support llm traning for now. If your want to train from scratch, please use conf/cosyvoice.fromscratch.yaml"
+        //         if [ $train_engine == 'deepspeed' ]; then
+        //             echo "Notice deepspeed has its own optimizer config. Modify conf/ds_stage2.json if necessary"
+        //         fi
+        //         cat $data_dir/prepared/{train-clean-100,train-clean-360,train-other-500}/parquet/data.list > $data_dir/prepared/train.data.list
+        //         cat $data_dir/prepared/{dev-clean,dev-other}/parquet/data.list > $data_dir/prepared/dev.data.list
+        //         for model in llm flow; do
+        //             torchrun --nnodes=1 --nproc_per_node=$num_gpus \
+        //                 --rdzv_id=$job_id --rdzv_backend="c10d" --rdzv_endpoint="localhost:0" \
+
+        //             cosyvoice/bin/train.py \
+        //             --train_engine $train_engine \
+        //             --config conf/cosyvoice.yaml \
+        //             --train_data $data_dir/prepared/train.data.list \
+        //             --cv_data $data_dir/prepared/dev.data.list \
+        //             --model $model \
+        //             --checkpoint $pretrained_model_dir/$model.pt \
+        //             --model_dir `pwd`/exp/cosyvoice/$model/$train_engine \
+        //             --tensorboard_dir `pwd`/tensorboard/cosyvoice/$model/$train_engine \
+        //             --ddp.dist_backend $dist_backend \
+        //             --num_workers ${num_workers} \
+        //             --prefetch ${prefetch} \
+        //             --pin_memory \
+        //             --deepspeed_config ./conf/ds_stage2.json \
+        //             --deepspeed.save_states model+optimizer
+        //         done
+        // }
+    ]
+}
