@@ -24,11 +24,11 @@ def main(args):
     utt2wav, utt2spk = {}, {}
     with open('{}/wav.scp'.format(args.dir)) as f:
         for l in f:
-            l = l.replace('\n', '').split()
+            l = l.replace('\n', '').split(' ', maxsplit=1)
             utt2wav[l[0]] = l[1]
     with open('{}/utt2spk'.format(args.dir)) as f:
         for l in f:
-            l = l.replace('\n', '').split()
+            l = l.replace('\n', '').split(' ', maxsplit=1)
             utt2spk[l[0]] = l[1]
 
     option = onnxruntime.SessionOptions()

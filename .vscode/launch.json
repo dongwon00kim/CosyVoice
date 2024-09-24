@@ -10,6 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/cosyvoice/bin/inference.py",
             "console": "integratedTerminal",
+            "justMyCode": false,
             "args":[
                 "--mode", "zero_shot", // sft zero_shot
                 "--gpu", "0",
@@ -32,6 +33,7 @@
             "request": "launch",
             "program": "/opt/conda/envs/cosyvoice/bin/torchrun",
             "console": "integratedTerminal",
+            "justMyCode": false,
             "args": [
                 "--nnodes=1",
                 "--nproc_per_node=1",
@@ -58,6 +60,18 @@
                 "CUDA_VISIBLE_DEVICES": "0",
             },
         },
+        {
+            "name": "CosyVoice: Preprocessing #1",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/libritts/cosyvoice/tools/extract_embedding.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--dir", "/workspace/data/CosyVoiceDatasets_AIHub/prepared/",
+                "--onnx_path", "${workspaceFolder}/pretrained_models/CosyVoice-300M/campplus.onnx",
+            ]
+        }
 
         //     # train llm
         //     export CUDA_VISIBLE_DEVICES="0,1,2,3"
