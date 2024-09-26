@@ -59,18 +59,22 @@ RUN conda activate ${VENV} && cd CosyVoice && pip install -r requirements.txt
 
 WORKDIR /workspace/CosyVoice
 
-RUN apt-get install -y git-lfs && git lfs install && mkdir pretrained_models && \
-    git clone https://www.modelscope.cn/iic/CosyVoice-300M.git pretrained_models/CosyVoice-300M && \
-    git clone https://www.modelscope.cn/iic/CosyVoice-300M-SFT.git pretrained_models/CosyVoice-300M-SFT && \
-    git clone https://www.modelscope.cn/iic/CosyVoice-300M-Instruct.git pretrained_models/CosyVoice-300M-Instruct && \
-    git clone https://www.modelscope.cn/iic/CosyVoice-ttsfrd.git pretrained_models/CosyVoice-ttsfrd
-
 
 # ==================================================================
 # Devel environment
 # ------------------------------------------------------------------
+RUN apt-get install -y git-lfs && git lfs install && mkdir pretrained_models && \
+    git clone https://www.modelscope.cn/iic/CosyVoice-300M.git pretrained_models/CosyVoice-300M && \
+    git clone https://www.modelscope.cn/iic/CosyVoice-300M-SFT.git pretrained_models/CosyVoice-300M-SFT && \
+    git clone https://www.modelscope.cn/iic/CosyVoice-300M-Instruct.git pretrained_models/CosyVoice-300M-Instruct && \
+    git clone https://www.modelscope.cn/iic/CosyVoice-ttsfrd.git pretrained_models/CosyVoice-ttsfrd && \
+    cd pretrained_models/CosyVoice-ttsfrd && \
+    unzip resource.zip -d . && \
+    pip install ttsfrd-0.3.6-cp38-cp38-linux_x86_64.whl
+
+
 RUN wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -O ~/.git-completion.bash && \
-echo "source ~/.git-completion.bash" >> ~/.bashrc
+    echo "source ~/.git-completion.bash" >> ~/.bashrc
 # ------------------------------------------------------------------
 # ~Devel environment
 # ==================================================================

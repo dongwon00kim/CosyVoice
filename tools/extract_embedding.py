@@ -18,17 +18,17 @@ import torchaudio
 from tqdm import tqdm
 import onnxruntime
 import torchaudio.compliance.kaldi as kaldi
-
+from pathlib import Path
 
 def main(args):
     utt2wav, utt2spk = {}, {}
     with open('{}/wav.scp'.format(args.dir)) as f:
         for l in f:
-            l = l.replace('\n', '').split()
+            l = l.replace('\n', '').split(' ', maxsplit=1)
             utt2wav[l[0]] = l[1]
     with open('{}/utt2spk'.format(args.dir)) as f:
         for l in f:
-            l = l.replace('\n', '').split()
+            l = l.replace('\n', '').split(' ', maxsplit=1)
             utt2spk[l[0]] = l[1]
 
     option = onnxruntime.SessionOptions()
@@ -67,4 +67,7 @@ if __name__ == "__main__":
     parser.add_argument('--onnx_path',
                         type=str)
     args = parser.parse_args()
+
+    assert Path(args.dir).exists() and Path(args.dir).is_dir()
+
     main(args)
