@@ -40,7 +40,7 @@ def main(args):
         audio, sample_rate = torchaudio.load(utt2wav[utt])
         if sample_rate != 16000:
             audio = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=16000)(audio)
-        if audio.shape[1] / 16000 > 30:
+        if audio.shape[1] / 16000 > args.max_duration:
             logging.warning('do not support extract speech token for audio longer than 30s')
             speech_token = []
         else:
@@ -57,5 +57,8 @@ if __name__ == "__main__":
                         type=str)
     parser.add_argument('--onnx_path',
                         type=str)
+    parser.add_argument('--max_duration',
+                        default=30,
+                        type=int)
     args = parser.parse_args()
     main(args)

@@ -21,6 +21,7 @@ import pandas as pd
 import multiprocessing
 import time
 import torch
+from pathlib import Path
 
 
 def job(utt_list, parquet_file, utt2parquet_file, spk2parquet_file):
@@ -69,6 +70,9 @@ if __name__ == "__main__":
     parser.add_argument('--des_dir',
                         type=str)
     args = parser.parse_args()
+
+    assert Path(args.src_dir).exists() and Path(args.src_dir).is_dir()
+    Path(args.des_dir).mkdir(parents=True, exist_ok=True)
 
     utt2wav, utt2text, utt2spk = {}, {}, {}
     with open('{}/wav.scp'.format(args.src_dir)) as f:

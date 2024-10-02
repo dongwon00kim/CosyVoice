@@ -59,7 +59,7 @@
             },
         },
         {
-            "name": "CosyVoice: Data Preparation #1",
+            "name": "CosyVoice: Data Preparation #1 - Embedding",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/examples/libritts/cosyvoice/tools/extract_embedding.py",
@@ -70,7 +70,7 @@
             ],
         },
         {
-            "name": "CosyVoice: Data Preparation #2",
+            "name": "CosyVoice: Data Preparation #2 - Speech Token",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/examples/libritts/cosyvoice/tools/extract_speech_token.py",
@@ -80,6 +80,20 @@
                 "--onnx_path", "${workspaceFolder}/pretrained_models/CosyVoice-300M/speech_tokenizer_v1.onnx",
             ],
         },
+        {
+            "name": "CosyVoice: Data Preparation #3 - Make Parquet List",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/libritts/cosyvoice/tools/make_parquet_list.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--num_utts_per_parquet", "1000",
+                "--num_processes", "10",
+                "--src_dir", "/workspace/data/prepared/tokenized/v2.6_cosyvoice/AIHub_033_BroadcastTranslation_en",
+                "--des_dir", "/workspace/data/prepared/tokenized/v2.6_cosyvoice/AIHub_033_BroadcastTranslation_en/parquet",
+            ],
+        },
+
 
 
 
