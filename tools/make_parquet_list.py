@@ -81,8 +81,11 @@ if __name__ == "__main__":
             utt2wav[l[0]] = l[1]
     with open('{}/text'.format(args.src_dir)) as f:
         for l in f:
-            l = l.replace('\n', '').split()
-            utt2text[l[0]] = ' '.join(l[1:])
+            l = l.replace('\n', '').split(' ', maxsplit=1)
+            l[1] = l[1].strip()
+            if l[1].startswith('"') and l[1].endswith('"'):
+                l[1] = l[1][1:-1]
+            utt2text[l[0]] = l[1]
     with open('{}/utt2spk'.format(args.src_dir)) as f:
         for l in f:
             l = l.replace('\n', '').split(' ', maxsplit=1)
