@@ -88,12 +88,22 @@
             "console": "integratedTerminal",
             "args": [
                 "--num_utts_per_parquet", "1000",
-                "--num_processes", "10",
-                "--src_dir", "/workspace/data/prepared/tokenized/v2.6_cosyvoice/AIHub_033_BroadcastTranslation_en",
-                "--des_dir", "/workspace/data/prepared/tokenized/v2.6_cosyvoice/AIHub_033_BroadcastTranslation_en/parquet",
+                "--num_processes", "1",
+                "--src_dir", "/workspace/data/prepared/tokenized/v2.6_cosyvoice/AIHub_131_MultiReadingStyle_en_ko",
+                "--des_dir", "/workspace/data/prepared/tokenized/v2.6_cosyvoice/AIHub_131_MultiReadingStyle_en_ko/parquet",
             ],
         },
 
+        {
+            "name": "CosyVoice: Data Verifier - Unique Mark Symbol",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/libritts/cosyvoice/tools/text_unique_symbols.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dir", "/workspace/data/prepared/tokenized/v2.6_cosyvoice/",
+            ],
+        },
 
 
 
